@@ -23,8 +23,33 @@ enum Error {
     TokenTooLong,
 }
 
+struct Stack {
+    values: [isize; STACK_SIZE],
+    top_index: usize,
+}
+
+impl Default for Stack {
+    fn default() -> Self {
+        Stack {
+            values: [0; STACK_SIZE],
+            top_index: 0,
+        }
+    }
+}
+
+impl Stack {
+    fn push(&mut self, value: isize) -> Result<(), Error> {
+        todo!();
+    }
+
+    fn pop(&mut self) -> Result<isize, Error> {
+        todo!();
+    }
+}
+
 const MAX_TERMS: usize = 32;
 const MAX_TOKEN_LENGTH: usize = 16;
+const STACK_SIZE: usize = 32;
 
 const PROMPT: &'static str = "> ";
 
@@ -78,7 +103,19 @@ fn read_expression(
 }
 
 fn evaluate(terms: &[Term; MAX_TERMS], number_of_terms: usize) -> Result<isize, Error> {
-    todo!();
+    let mut stack: Stack = Default::default();
+    for index in 0..number_of_terms {
+        match terms[index] {
+            Term::Value(value) => stack.push(value)?,
+            Term::Operator(operator) => {
+                let second = stack.pop()?;
+                let first = stack.pop()?;
+                let result = apply(operator, first, second);
+                stack.push(result)?;
+            }
+        };
+    }
+    stack.pop()
 }
 
 fn print_result(result: isize, output: &mut impl Write<u8>) {
@@ -142,4 +179,8 @@ fn read_value(token: &[u8; MAX_TOKEN_LENGTH], token_length: usize) -> Option<Ter
     }
 
     Some(Term::Value(sign * magnitude))
+}
+
+fn apply(operator: Operator, first: isize, second: isize) -> isize {
+    todo!();
 }
