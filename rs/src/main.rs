@@ -2,10 +2,12 @@
 #![no_main]
 
 extern crate cortex_m_rt;
+extern crate embedded_hal;
 extern crate panic_halt;
 extern crate stm32f4xx_hal;
 
-use core::fmt::Write;
+mod rpn_calculator;
+
 use cortex_m_rt::entry;
 use stm32f4xx_hal::{pac::Peripherals, prelude::*, serial};
 
@@ -21,7 +23,7 @@ fn main() -> ! {
     let config = serial::config::Config::default();
     let mut serial = serial::Serial::new(peripherals.UART4, (tx, rx), config, &clocks).unwrap();
 
-    serial.write_str("Hello, world!\r\n").unwrap();
+    rpn_calculator::run_repl(&mut serial);
 
     loop {}
 }
