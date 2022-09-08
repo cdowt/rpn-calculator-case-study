@@ -31,6 +31,8 @@ const PROMPT: &'static str = "> ";
 const SPACE: u8 = b" "[0];
 const TAB: u8 = b"\t"[0];
 const LINE_FEED: u8 = b"\n"[0];
+const ZERO: u8 = b"0"[0];
+const NINE: u8 = b"9"[0];
 
 pub fn run_repl<T: Read<u8> + Write<u8>>(port: &mut T) {
     let mut terms: [Term; MAX_TERMS] = [Term::Value(0); MAX_TERMS];
@@ -124,5 +126,20 @@ fn read_operator(token: &[u8; MAX_TOKEN_LENGTH], token_length: usize) -> Option<
 }
 
 fn read_value(token: &[u8; MAX_TOKEN_LENGTH], token_length: usize) -> Option<Term> {
-    todo!();
+    let (sign, digits_start) = if token[0] as char == '-' {
+        (-1, 1)
+    } else {
+        (1, 0)
+    };
+
+    let mut magnitude: isize = 0;
+    for index in digits_start..token_length {
+        if token[index] < ZERO || token[index] > NINE {
+            return None;
+        }
+        magnitude *= 10;
+        magnitude += (token[index] - ZERO) as isize;
+    }
+
+    Some(Term::Value(sign * magnitude))
 }
