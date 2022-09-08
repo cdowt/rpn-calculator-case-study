@@ -63,6 +63,7 @@ impl Stack {
 const MAX_TERMS: usize = 32;
 const MAX_TOKEN_LENGTH: usize = 16;
 const STACK_SIZE: usize = 32;
+const MAX_DIGITS: usize = 20;
 
 const PROMPT: &'static str = "> ";
 
@@ -132,7 +133,26 @@ fn evaluate(terms: &[Term; MAX_TERMS], number_of_terms: usize) -> Result<isize, 
 }
 
 fn print_result(result: isize, output: &mut impl Write<u8>) {
-    todo!();
+    let mut remaining: usize = if result < 0 {
+        print("-", output);
+        (result * -1) as usize
+    } else {
+        result as usize
+    };
+
+    let mut digits: [u8; MAX_DIGITS] = [0; MAX_DIGITS];
+    let mut number_of_digits = 0;
+    while remaining > 0 {
+        let digit_value = remaining % 10;
+        digits[number_of_digits] = ZERO + digit_value as u8;
+        remaining /= 10;
+        number_of_digits += 1;
+    }
+
+    for index in (0..number_of_digits).rev() {
+        print_byte(digits[index], output);
+    }
+    print_byte(LINE_FEED, output);
 }
 
 fn print_error(error: Error, output: &mut impl Write<u8>) {
