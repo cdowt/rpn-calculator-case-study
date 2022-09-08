@@ -21,6 +21,8 @@ enum Error {
     TooManyTerms,
     ReadError,
     TokenTooLong,
+    StackOverflow,
+    StackUnderflow,
 }
 
 struct Stack {
@@ -39,11 +41,22 @@ impl Default for Stack {
 
 impl Stack {
     fn push(&mut self, value: isize) -> Result<(), Error> {
-        todo!();
+        if self.top_index == STACK_SIZE {
+            Err(Error::StackOverflow)
+        } else {
+            self.values[self.top_index] = value;
+            self.top_index += 1;
+            Ok(())
+        }
     }
 
     fn pop(&mut self) -> Result<isize, Error> {
-        todo!();
+        if self.top_index == 0 {
+            Err(Error::StackUnderflow)
+        } else {
+            self.top_index -= 1;
+            Ok(self.values[self.top_index])
+        }
     }
 }
 
