@@ -159,6 +159,8 @@ fn print_error(error: Error, output: &mut impl Write<u8>) {
         Error::StackOverflow => "the stack overflowed",
         Error::StackUnderflow => "the stack underflowed",
     };
+
+    end_line(output);
     print("Error: ", output);
     print(message, output);
     end_line(output);
