@@ -2,8 +2,18 @@ use embedded_hal::serial::*;
 use nb::block;
 
 #[derive(Clone, Copy)]
+enum Operator {
+    Plus,
+    Minus,
+    Multiply,
+    Divide,
+    Remainder,
+}
+
+#[derive(Clone, Copy)]
 enum Term {
     Value(isize),
+    Operator(Operator),
 }
 
 enum Error {
@@ -98,7 +108,19 @@ fn read_token(
 }
 
 fn read_operator(token: &[u8; MAX_TOKEN_LENGTH], token_length: usize) -> Option<Term> {
-    todo!();
+    if token_length > 1 {
+        None
+    } else {
+        match token[0] as char {
+            '+' => Some(Operator::Plus),
+            '-' => Some(Operator::Minus),
+            '*' => Some(Operator::Multiply),
+            '/' => Some(Operator::Divide),
+            '%' => Some(Operator::Remainder),
+            _ => None,
+        }
+        .map(|operator| Term::Operator(operator))
+    }
 }
 
 fn read_value(token: &[u8; MAX_TOKEN_LENGTH], token_length: usize) -> Option<Term> {
