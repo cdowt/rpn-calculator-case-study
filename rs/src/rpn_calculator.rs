@@ -84,14 +84,14 @@ pub fn run_repl<T: Read<u8> + Write<u8>>(port: &mut T) {
     }
 }
 
-fn read_expression(
-    input: &mut impl Read<u8>,
+fn read_expression<T: Read<u8> + Write<u8>>(
+    port: &mut T,
     terms: &mut [Term; MAX_TERMS],
 ) -> Result<usize, Error> {
     let mut token: [u8; MAX_TOKEN_LENGTH] = [0; MAX_TOKEN_LENGTH];
     let mut number_of_terms = 0;
     loop {
-        let (token_length, end_of_line) = read_token(input, &mut token)?;
+        let (token_length, end_of_line) = read_token(port, &mut token)?;
         let term = read_operator(&token, token_length)
             .or(read_value(&token, token_length))
             .ok_or(Error::InvalidTerm)?;
@@ -163,13 +163,14 @@ fn print_error(error: Error, output: &mut impl Write<u8>) {
     print("\n", output);
 }
 
-fn read_token(
-    input: &mut impl Read<u8>,
+fn read_token<T: Read<u8> + Write<u8>>(
+    port: &mut T,
     token: &mut [u8; MAX_TOKEN_LENGTH],
 ) -> Result<(usize, bool), Error> {
     let mut token_length = 0;
     loop {
-        let byte = block!(input.read()).map_err(|_| Error::ReadError)?;
+        let byte = echoing_read(port)?;
+
         if byte == SPACE || byte == TAB {
             return Ok((token_length, false));
         } else if byte == LINE_FEED {
@@ -236,4 +237,10 @@ fn print(message: &str, output: &mut impl Write<u8>) {
 
 fn print_byte(byte: u8, output: &mut impl Write<u8>) {
     block!(output.write(byte)).unwrap_or_default();
+}
+
+fn echoing_read<T: Read<u8> + Write<u8>>(port: &mut T) -> Result<u8, Error> {
+    let byte = block!(port.read()).map_err(|_| Error::ReadError)?;
+    print_byte(byte, port);
+    Ok(byte)
 }
