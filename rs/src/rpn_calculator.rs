@@ -76,17 +76,11 @@ const NINE: u8 = b"9"[0];
 pub fn run_repl<T: Read<u8> + Write<u8>>(port: &mut T) {
     let mut terms: [Term; MAX_TERMS] = [Term::Value(0); MAX_TERMS];
     loop {
-        print_prompt(port);
+        print(PROMPT, port);
         match read_expression(port, &mut terms).and_then(|n| evaluate(&terms, n)) {
             Ok(result) => print_result(result, port),
             Err(error) => print_error(error, port),
         }
-    }
-}
-
-fn print_prompt(output: &mut impl Write<u8>) {
-    for byte in PROMPT.as_bytes() {
-        block!(output.write(*byte)).unwrap_or_default();
     }
 }
 
