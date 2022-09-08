@@ -1,4 +1,5 @@
 use embedded_hal::serial::*;
+use nb::block;
 
 #[derive(Clone, Copy)]
 enum Term {
@@ -9,6 +10,8 @@ enum Error {
 }
 
 const MAX_TERMS: usize = 32;
+
+const PROMPT: &'static str = "> ";
 
 pub fn run_repl<T: Read<u8> + Write<u8>>(port: &mut T) {
     let mut terms: [Term; MAX_TERMS] = [Term::Value(0); MAX_TERMS];
@@ -22,7 +25,9 @@ pub fn run_repl<T: Read<u8> + Write<u8>>(port: &mut T) {
 }
 
 fn print_prompt(output: &mut impl Write<u8>) {
-    todo!();
+    for byte in PROMPT.as_bytes() {
+        block!(output.write(*byte)).unwrap_or_default();
+    }
 }
 
 fn read_expression(

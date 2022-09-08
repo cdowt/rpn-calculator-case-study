@@ -3,6 +3,7 @@
 
 extern crate cortex_m_rt;
 extern crate embedded_hal;
+extern crate nb;
 extern crate panic_halt;
 extern crate stm32f4xx_hal;
 
