@@ -69,6 +69,7 @@ const PROMPT: &'static str = "> ";
 
 const SPACE: u8 = b" "[0];
 const TAB: u8 = b"\t"[0];
+const CARRIAGE_RETURN: u8 = b"\r"[0];
 const LINE_FEED: u8 = b"\n"[0];
 const ZERO: u8 = b"0"[0];
 const NINE: u8 = b"9"[0];
@@ -146,7 +147,7 @@ fn print_result(result: isize, output: &mut impl Write<u8>) {
     for index in (0..number_of_digits).rev() {
         print_byte(digits[index], output);
     }
-    print_byte(LINE_FEED, output);
+    end_line(output);
 }
 
 fn print_error(error: Error, output: &mut impl Write<u8>) {
@@ -160,7 +161,7 @@ fn print_error(error: Error, output: &mut impl Write<u8>) {
     };
     print("Error: ", output);
     print(message, output);
-    print("\n", output);
+    end_line(output);
 }
 
 fn read_token<T: Read<u8> + Write<u8>>(
@@ -173,7 +174,8 @@ fn read_token<T: Read<u8> + Write<u8>>(
 
         if byte == SPACE || byte == TAB {
             return Ok((token_length, false));
-        } else if byte == LINE_FEED {
+        } else if byte == CARRIAGE_RETURN {
+            print_byte(LINE_FEED, port);
             return Ok((token_length, true));
         } else if token_length == MAX_TOKEN_LENGTH {
             return Err(Error::TokenTooLong);
@@ -237,6 +239,11 @@ fn print(message: &str, output: &mut impl Write<u8>) {
 
 fn print_byte(byte: u8, output: &mut impl Write<u8>) {
     block!(output.write(byte)).unwrap_or_default();
+}
+
+fn end_line(output: &mut impl Write<u8>) {
+    print_byte(CARRIAGE_RETURN, output);
+    print_byte(LINE_FEED, output);
 }
 
 fn echoing_read<T: Read<u8> + Write<u8>>(port: &mut T) -> Result<u8, Error> {
