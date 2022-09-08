@@ -136,7 +136,17 @@ fn print_result(result: isize, output: &mut impl Write<u8>) {
 }
 
 fn print_error(error: Error, output: &mut impl Write<u8>) {
-    todo!();
+    let message = match error {
+        Error::InvalidTerm => "a term in the expression was invalid",
+        Error::TooManyTerms => "too many terms in the expression",
+        Error::ReadError => "error while reading input",
+        Error::TokenTooLong => "a term in the expression was too long",
+        Error::StackOverflow => "the stack overflowed",
+        Error::StackUnderflow => "the stack underflowed",
+    };
+    print("Error: ", output);
+    print(message, output);
+    print("\n", output);
 }
 
 fn read_token(
@@ -202,4 +212,14 @@ fn apply(operator: Operator, first: isize, second: isize) -> isize {
         Operator::Divide => first / second,
         Operator::Remainder => first % second,
     }
+}
+
+fn print(message: &str, output: &mut impl Write<u8>) {
+    for &byte in message.as_bytes() {
+        print_byte(byte, output);
+    }
+}
+
+fn print_byte(byte: u8, output: &mut impl Write<u8>) {
+    block!(output.write(byte)).unwrap_or_default();
 }
