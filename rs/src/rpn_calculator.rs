@@ -9,12 +9,18 @@ enum Term {
 enum Error {
     InvalidTerm,
     TooManyTerms,
+    ReadError,
+    TokenTooLong,
 }
 
 const MAX_TERMS: usize = 32;
 const MAX_TOKEN_LENGTH: usize = 16;
 
 const PROMPT: &'static str = "> ";
+
+const SPACE: u8 = b" "[0];
+const TAB: u8 = b"\t"[0];
+const LINE_FEED: u8 = b"\n"[0];
 
 pub fn run_repl<T: Read<u8> + Write<u8>>(port: &mut T) {
     let mut terms: [Term; MAX_TERMS] = [Term::Value(0); MAX_TERMS];
@@ -75,7 +81,20 @@ fn read_token(
     input: &mut impl Read<u8>,
     token: &mut [u8; MAX_TOKEN_LENGTH],
 ) -> Result<(usize, bool), Error> {
-    todo!();
+    let mut token_length = 0;
+    loop {
+        let byte = block!(input.read()).map_err(|_| Error::ReadError)?;
+        if byte == SPACE || byte == TAB {
+            return Ok((token_length, false));
+        } else if byte == LINE_FEED {
+            return Ok((token_length, true));
+        } else if token_length == MAX_TOKEN_LENGTH {
+            return Err(Error::TokenTooLong);
+        } else {
+            token[token_length] = byte;
+            token_length += 1;
+        }
+    }
 }
 
 fn read_operator(token: &[u8; MAX_TOKEN_LENGTH], token_length: usize) -> Option<Term> {
