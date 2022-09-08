@@ -195,5 +195,11 @@ fn read_value(token: &[u8; MAX_TOKEN_LENGTH], token_length: usize) -> Option<Ter
 }
 
 fn apply(operator: Operator, first: isize, second: isize) -> isize {
-    todo!();
+    match operator {
+        Operator::Plus => first + second,
+        Operator::Minus => first - second,
+        Operator::Multiply => first * second,
+        Operator::Divide => first / second,
+        Operator::Remainder => first % second,
+    }
 }
