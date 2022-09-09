@@ -11,6 +11,7 @@ enum error {
 	NO_ERROR,
 	INVALID_TERM,
 	TOO_MANY_TERMS,
+	TOKEN_TOO_LONG,
 };
 
 enum term_type {
@@ -132,6 +133,29 @@ static void print_result(int result)
 static enum error read_token(char token[MAX_TOKEN_LENGTH],
 	unsigned *token_length_out, short *end_of_line_out)
 {
+	char c;
+	unsigned length = 0;
+	while (1) {
+		switch (c = read_char()) {
+		case ' ':
+		case '\t':
+			*token_length_out = length;
+			*end_of_line_out = 0;
+			return NO_ERROR;
+
+		case '\r':
+			print_char('\n');
+			*token_length_out = length;
+			*end_of_line_out = 1;
+			return NO_ERROR;
+
+		default:
+			if (length == MAX_TOKEN_LENGTH)
+				return TOKEN_TOO_LONG;
+			else
+				token[length++] = c;
+		}
+	}
 	return NO_ERROR;
 }
 
