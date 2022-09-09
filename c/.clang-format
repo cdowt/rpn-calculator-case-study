@@ -2,3 +2,4 @@ BasedOnStyle: WebKit
 PointerAlignment: Right
 TabWidth: 4
 UseTab: AlignWithSpaces
+ColumnLimit: 80
