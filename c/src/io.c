@@ -21,5 +21,7 @@ char read_char(void)
         ;
 	USART_ClearFlag(UART4, USART_FLAG_RXNE);
 
-	return USART_ReceiveData(UART4);
+	char c = USART_ReceiveData(UART4);
+	print_char(c);
+	return c;
 }
