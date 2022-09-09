@@ -137,11 +137,15 @@ fn print_result(result: isize, output: &mut impl Write<u8>) {
 
     let mut digits: [u8; MAX_DIGITS] = [0; MAX_DIGITS];
     let mut number_of_digits = 0;
-    while remaining > 0 {
+    loop {
         let digit_value = remaining % 10;
         digits[number_of_digits] = ZERO + digit_value as u8;
         remaining /= 10;
         number_of_digits += 1;
+
+        if remaining == 0 {
+            break;
+        }
     }
 
     for index in (0..number_of_digits).rev() {
