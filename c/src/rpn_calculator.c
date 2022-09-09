@@ -201,6 +201,33 @@ static short try_read_value(
 static short try_read_operator(
 	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out)
 {
+	if (token_length != 1)
+		return 0;
+
+	enum operator operator;
+	switch (token[0]) {
+	case '+':
+		operator= PLUS;
+		break;
+	case '-':
+		operator= MINUS;
+		break;
+	case '*':
+		operator= MULTIPLY;
+		break;
+	case '/':
+		operator= DIVIDE;
+		break;
+	case '%':
+		operator= REMAINDER;
+		break;
+
+	default:
+		return 0;
+	}
+
+	term_out->type = OPERATOR;
+	term_out->operator= operator;
 	return 1;
 }
 
