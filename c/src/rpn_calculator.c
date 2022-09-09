@@ -119,7 +119,7 @@ static enum error read_expression(struct expression *expression_out)
 static enum error evaluate(const struct expression *expression, int *result_out)
 {
 	int first, second;
-	struct stack stack;
+	struct stack stack = { 0 };
 	enum error e;
 	for (unsigned i = 0; i < expression->term_count; ++i) {
 		switch (expression->terms[i].type) {
