@@ -1,3 +1,5 @@
+#include "io.h"
+
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_usart.h"
@@ -27,9 +29,6 @@ int main(void)
 		;
 
 	const char *message = "Hello, world!\r\n";
-	for (const char *p = message; *p != '\0'; ++p) {
-		USART_SendData(UART4, (uint16_t)*p);
-		while (USART_GetFlagStatus(UART4, USART_FLAG_TC) == RESET)
-			;
-	}
+	for (const char *p = message; *p != '\0'; ++p)
+		print_char(*p);
 }
