@@ -64,6 +64,7 @@ static short try_read_operator(
 	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out);
 static enum error push(struct stack *stack, int value);
 static enum error pop(struct stack *stack, int *value_out);
+static int apply(enum operator operator, int first, int second);
 
 void run_repl(void)
 {
@@ -264,4 +265,20 @@ static enum error pop(struct stack *stack, int *value_out)
 		return STACK_UNDERFLOW;
 	*value_out = stack->values[--stack->top_index];
 	return NO_ERROR;
+}
+
+static int apply(enum operator operator, int first, int second)
+{
+	switch (operator) {
+	case PLUS:
+		return first + second;
+	case MINUS:
+		return first - second;
+	case MULTIPLY:
+		return first * second;
+	case DIVIDE:
+		return first / second;
+	case REMAINDER:
+		return first % second;
+	}
 }
