@@ -4,6 +4,7 @@
 
 #define PROMPT "> "
 #define MAX_TERMS 32
+#define MAX_DIGITS 20
 
 enum error {
 	NO_ERROR,
@@ -34,6 +35,8 @@ struct expression {
 	struct term terms[MAX_TERMS];
 	unsigned term_count;
 };
+
+static const char *crlf = "\r\n";
 
 static enum error read_expression(struct expression *expression_out);
 static enum error evaluate(
@@ -70,4 +73,22 @@ static enum error evaluate(const struct expression *expression, int *result_out)
 
 static void print_error(enum error e) { }
 
-static void print_result(int result) { }
+static void print_result(int result)
+{
+	if (result < 0) {
+		print_char('-');
+		result *= -1;
+	}
+
+	char digits[MAX_DIGITS];
+	unsigned n = 0;
+	do {
+		digits[n++] = '0' + result % 10;
+		result /= 10;
+	} while (result != 0);
+
+	while (--n < MAX_DIGITS)
+		print_char(digits[n]);
+
+	print_str(crlf);
+}
