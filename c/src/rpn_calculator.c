@@ -84,6 +84,9 @@ static enum error read_expression(struct expression *expression_out)
 		if ((e = read_token(token, &token_length, &end_of_line)) != NO_ERROR)
 			return e;
 
+		if (token_length == 0)
+			continue;
+
 		struct term *current_term
 			= &expression_out->terms[expression_out->term_count];
 		if (try_read_value(token, token_length, current_term)
@@ -162,9 +165,6 @@ static enum error read_token(char token[MAX_TOKEN_LENGTH],
 static short try_read_value(
 	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out)
 {
-	if (token_length == 0)
-		return 0;
-
 	int sign;
 	unsigned digits_start;
 	if (token[0] == '-') {
