@@ -5,9 +5,12 @@
 #define PROMPT "> "
 #define MAX_TERMS 32
 #define MAX_DIGITS 20
+#define MAX_TOKEN_LENGTH 16
 
 enum error {
 	NO_ERROR,
+	INVALID_TERM,
+	TOO_MANY_TERMS,
 };
 
 enum term_type {
@@ -41,6 +44,12 @@ static const char *crlf = "\r\n";
 static enum error read_expression(struct expression *expression_out);
 static enum error evaluate(
 	const struct expression *expression, int *result_out);
+static enum error read_token(char token[MAX_TOKEN_LENGTH],
+	unsigned *token_length_out, short *end_of_line_out);
+static short try_read_value(
+	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out);
+static short try_read_operator(
+	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out);
 
 static void print_error(enum error e);
 static void print_result(int result);
@@ -62,6 +71,32 @@ void run_repl(void)
 
 static enum error read_expression(struct expression *expression_out)
 {
+	expression_out->term_count = 0;
+
+	static char token[MAX_TOKEN_LENGTH];
+	unsigned token_length;
+	short end_of_line;
+	enum error e;
+
+	while (1) {
+		if ((e = read_token(token, &token_length, &end_of_line)) != NO_ERROR)
+			return e;
+
+		struct term *current_term
+			= &expression_out->terms[expression_out->term_count];
+		if (try_read_value(token, token_length, current_term)
+			|| try_read_operator(token, token_length, current_term))
+			++expression_out->term_count;
+		else
+			return INVALID_TERM;
+
+		if (expression_out->term_count == MAX_TERMS)
+			return TOO_MANY_TERMS;
+
+		if (end_of_line)
+			break;
+	}
+
 	return NO_ERROR;
 }
 
@@ -91,4 +126,22 @@ static void print_result(int result)
 		print_char(digits[n]);
 
 	print_str(crlf);
+}
+
+static enum error read_token(char token[MAX_TOKEN_LENGTH],
+	unsigned *token_length_out, short *end_of_line_out)
+{
+	return NO_ERROR;
+}
+
+static short try_read_value(
+	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out)
+{
+	return 1;
+}
+
+static short try_read_operator(
+	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out)
+{
+	return 1;
 }
