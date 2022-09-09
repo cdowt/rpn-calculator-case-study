@@ -117,8 +117,27 @@ static enum error read_expression(struct expression *expression_out)
 
 static enum error evaluate(const struct expression *expression, int *result_out)
 {
-	*result_out = 42;
-	return NO_ERROR;
+	int first, second;
+	struct stack stack;
+	enum error e;
+	for (unsigned i = 0; i < expression->term_count; ++i) {
+		switch (expression->terms[i].type) {
+		case VALUE:
+			if ((e = push(&stack, expression->terms[i].value)) != NO_ERROR)
+				return e;
+			break;
+
+		case OPERATOR:
+			if ((e = pop(&stack, &second)) != NO_ERROR)
+				return e;
+			if ((e = pop(&stack, &first)) != NO_ERROR)
+				return e;
+			push(&stack, apply(expression->terms[i].operator, first, second));
+			break;
+		}
+	}
+
+	return pop(&stack, result_out);
 }
 
 static void print_error(enum error e) { }
