@@ -6,12 +6,15 @@
 #define MAX_TERMS 32
 #define MAX_DIGITS 20
 #define MAX_TOKEN_LENGTH 16
+#define STACK_SIZE 32
 
 enum error {
 	NO_ERROR,
 	INVALID_TERM,
 	TOO_MANY_TERMS,
 	TOKEN_TOO_LONG,
+	STACK_OVERFLOW,
+	STACK_UNDERFLOW,
 };
 
 enum term_type {
@@ -40,6 +43,11 @@ struct expression {
 	unsigned term_count;
 };
 
+struct stack {
+	int values[STACK_SIZE];
+	unsigned top_index;
+};
+
 static const char *crlf = "\r\n";
 
 static enum error read_expression(struct expression *expression_out);
@@ -54,6 +62,8 @@ static short try_read_operator(
 
 static void print_error(enum error e);
 static void print_result(int result);
+static enum error push(struct stack *stack, int value);
+static enum error pop(struct stack *stack, int *value_out);
 
 void run_repl(void)
 {
@@ -192,4 +202,20 @@ static short try_read_operator(
 	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out)
 {
 	return 1;
+}
+
+static enum error push(struct stack *stack, int value)
+{
+	if (stack->top_index == STACK_SIZE)
+		return STACK_OVERFLOW;
+	stack->values[stack->top_index++] = value;
+	return NO_ERROR;
+}
+
+static enum error pop(struct stack *stack, int *value_out)
+{
+	if (stack->top_index == 0)
+		return STACK_UNDERFLOW;
+	*value_out = stack->values[--stack->top_index];
+	return NO_ERROR;
 }
