@@ -61,6 +61,7 @@ void run_repl(void)
 	int result;
 
 	while (1) {
+		print_str(PROMPT);
 		if ((e = read_expression(&expression)) != NO_ERROR
 			|| (e = evaluate(&expression, &result)) != NO_ERROR)
 			print_error(e);
