@@ -1,5 +1,8 @@
 #include "rpn_calculator.h"
 
+#include "io.h"
+
+#define PROMPT "> "
 #define MAX_TERMS 32
 
 enum error {
@@ -32,6 +35,39 @@ struct expression {
 	unsigned term_count;
 };
 
+static enum error read_expression(struct expression *expression_out);
+static enum error evaluate(
+	const struct expression *expression, int *result_out);
+
+static void print_error(enum error e);
+static void print_result(int result);
+
 void run_repl(void)
 {
+	static struct expression expression;
+	enum error e;
+	int result;
+
+	while (1) {
+		if ((e = read_expression(&expression)) != NO_ERROR
+			|| (e = evaluate(&expression, &result)) != NO_ERROR)
+			print_error(e);
+		else
+			print_result(result);
+	}
 }
+
+static enum error read_expression(struct expression *expression_out)
+{
+	return NO_ERROR;
+}
+
+static enum error evaluate(const struct expression *expression, int *result_out)
+{
+	*result_out = 42;
+	return NO_ERROR;
+}
+
+static void print_error(enum error e) { }
+
+static void print_result(int result) { }
