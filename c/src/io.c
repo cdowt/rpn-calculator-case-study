@@ -17,7 +17,9 @@ void print_char(char c)
 
 char read_char(void)
 {
-    while (USART_GetFlagStatus(UART4, USART_FLAG_RXNE))
+    while (USART_GetFlagStatus(UART4, USART_FLAG_RXNE) == RESET)
         ;
-    return (char)USART_ReceiveData(UART4);
+	USART_ClearFlag(UART4, USART_FLAG_RXNE);
+
+	return USART_ReceiveData(UART4);
 }
