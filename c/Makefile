@@ -13,7 +13,7 @@ include stm32f40_41xxx.mk
 
 CFLAGS += -I inc
 
-SRC = src/io.c src/main.c
+SRC = src/io.c src/main.c src/rpn_calculator.c
 OBJ = $(SRC:.c=.o)
 
 bin/rpn-calculator: $(DEVICE_LIBS) $(OBJ)

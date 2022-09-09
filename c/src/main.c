@@ -1,4 +1,4 @@
-#include "io.h"
+#include "rpn_calculator.h"
 
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_rcc.h"
@@ -28,7 +28,5 @@ int main(void)
 	while (USART_GetFlagStatus(UART4, USART_FLAG_TC) == RESET)
 		;
 
-	const char *message = "Hello, world!\r\n";
-	for (const char *p = message; *p != '\0'; ++p)
-		print_char(*p);
+	run_repl();
 }
