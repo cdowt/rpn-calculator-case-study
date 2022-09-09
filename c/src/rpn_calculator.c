@@ -53,15 +53,15 @@ static const char *crlf = "\r\n";
 static enum error read_expression(struct expression *expression_out);
 static enum error evaluate(
 	const struct expression *expression, int *result_out);
+
+static void print_error(enum error e);
+static void print_result(int result);
 static enum error read_token(char token[MAX_TOKEN_LENGTH],
 	unsigned *token_length_out, short *end_of_line_out);
 static short try_read_value(
 	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out);
 static short try_read_operator(
 	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out);
-
-static void print_error(enum error e);
-static void print_result(int result);
 static enum error push(struct stack *stack, int value);
 static enum error pop(struct stack *stack, int *value_out);
 
