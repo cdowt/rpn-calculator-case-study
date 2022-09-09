@@ -280,5 +280,8 @@ static int apply(enum operator operator, int first, int second)
 		return first / second;
 	case REMAINDER:
 		return first % second;
+
+	default:
+		return 0;
 	}
 }
