@@ -100,8 +100,8 @@ static enum error read_expression(struct expression *expression_out)
 
 		struct term *current_term
 			= &expression_out->terms[expression_out->term_count];
-		if (try_read_value(token, token_length, current_term)
-			|| try_read_operator(token, token_length, current_term))
+		if (try_read_operator(token, token_length, current_term)
+			|| try_read_value(token, token_length, current_term))
 			++expression_out->term_count;
 		else
 			return INVALID_TERM;
