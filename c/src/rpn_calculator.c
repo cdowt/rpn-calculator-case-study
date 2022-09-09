@@ -162,6 +162,29 @@ static enum error read_token(char token[MAX_TOKEN_LENGTH],
 static short try_read_value(
 	char token[MAX_TOKEN_LENGTH], unsigned token_length, struct term *term_out)
 {
+	if (token_length == 0)
+		return 0;
+
+	int sign;
+	unsigned digits_start;
+	if (token[0] == '-') {
+		sign = -1;
+		digits_start = 1;
+	} else {
+		sign = 1;
+		digits_start = 0;
+	}
+
+	int magnitude = 0;
+	for (unsigned i = digits_start; i < token_length; ++i) {
+		if (token[i] < '0' || token[i] > '9')
+			return 0;
+		magnitude *= 10;
+		magnitude += token[i] - '0';
+	}
+
+	term_out->type = VALUE;
+	term_out->value = sign * magnitude;
 	return 1;
 }
 
