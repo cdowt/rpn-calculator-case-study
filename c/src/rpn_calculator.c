@@ -49,6 +49,13 @@ struct stack {
 };
 
 static const char *crlf = "\r\n";
+static const char *error_messages[] = {
+	[INVALID_TERM] = "a term in the expression was invalid",
+	[TOO_MANY_TERMS] = "too many terms in the expression",
+	[TOKEN_TOO_LONG] = "a term in the expression was too long",
+	[STACK_OVERFLOW] = "the stack overflowed",
+	[STACK_UNDERFLOW] = "the stack underflowed",
+};
 
 static enum error read_expression(struct expression *expression_out);
 static enum error evaluate(
@@ -141,7 +148,13 @@ static enum error evaluate(const struct expression *expression, int *result_out)
 	return pop(&stack, result_out);
 }
 
-static void print_error(enum error e) { }
+static void print_error(enum error e)
+{
+	print_str(crlf);
+	print_str("Error: ");
+	print_str(error_messages[e]);
+	print_str(crlf);
+}
 
 static void print_result(int result)
 {
