@@ -5,6 +5,8 @@ default: bin/rpn-calculator
 CFLAGS += -std=c11 -pedantic
 CFLAGS += -Wall -Wextra
 
+CFLAGS += -nostdlib
+
 CC = arm-none-eabi-gcc
 AR = arm-none-eabi-ar
 AS = arm-none-eabi-as
