@@ -5,7 +5,7 @@ default: bin/rpn-calculator
 CFLAGS += -std=c11 -pedantic
 CFLAGS += -Wall -Wextra
 
-CFLAGS += -flto -nostdlib
+CFLAGS += -O3 -flto -nostdlib
 
 CC = arm-none-eabi-gcc
 AR = arm-none-eabi-ar
