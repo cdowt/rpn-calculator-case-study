@@ -17,3 +17,4 @@ features = [ "stm32f407" ]
 [profile.release]
 codegen-units = 1
 lto = true
+opt-level = 3
